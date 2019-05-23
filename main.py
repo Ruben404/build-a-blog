@@ -17,8 +17,9 @@ class Blog(db.Model):
     title = db.Column(db.String(15))
     body = db.Column(db.String(300))
 
-    def __init__(title):
+    def __init__(self, title, body):
         self.title = title
+        self.body = body
 
 
 @app.route('/')
@@ -29,13 +30,28 @@ def index():
 @app.route('/blog')
 def all_blogs():
 
+    # if request.method == 'POST':
+    #     blog_title = request.form('blog')
+    #     new_blog = Blog(blog_title, body)
+    #     db.session.add(new_blog)
+    #     db.session.commit()
+
     blogs = Blog.query.all()
 
-    return render_template('blog.html', title="Blog")
+    return render_template('blog.html', title="Blogs", blogs=blogs)
 
 
-@app.route('/postblog')
+@app.route('/postblog', methods=['POST', 'GET'])
 def post_blog():
+
+    if request.method == 'POST':
+        blog_title = request.form['blog-title']
+        blog_body = request.form['blog-body']
+        new_blog = Blog(blog_title, blog_body)
+        db.session.add(new_blog)
+        db.session.commit()
+
+
 
     return render_template('postblog.html', title="Post-Blog")
 
