@@ -9,8 +9,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:blogpost@l
 
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-app.secret_key = 'y337kGcys&zP3B'
-
 
 
 class Blog(db.Model):
@@ -44,42 +42,31 @@ def all_blogs():
 
 @app.route('/postblog', methods=['POST', 'GET'])
 def post_blog():
-    blog_title = request.form['blog-title']
-    blog_body = request.form['blog-body']
-
-    blog_title_error = ''
-    blog_body_error = ''
 
     if request.method == 'POST':
         blog_title = request.form['blog-title']
         blog_body = request.form['blog-body']
-        
-
+        blog_title_error = ""
+        blog_body_error = ""
 
         if blog_title != "" and blog_body != "":
             new_blog = Blog(blog_title, blog_body)
             db.session.add(new_blog)
             db.session.commit()
             return redirect('/blog?id={0}'.format(new_blog.id))
-        elif blog_title == "":
-            blog_title_error = "Title required."
-            blog_title = ""
-        elif blog_body == "":
-            blog_body_error = "Field is required."
-            blog_body = ""
         else:
-            flash("No fields can be blank.")
-            return render_template('postblog.html', title="Post-Blog",
-            blog_title=blog_title,
-            blog_body=blog_body,
-            blog_title_error=blog_title_error,
-            blog_body_error=blog_body_error)
+            if blog_title == "":
+                blog_title_error = "Title required."
+                blog_title = ""
+            else:
+                if blog_body == "":
+                    blog_body_error = "Blog body required."
+                    blog_body = ""
 
 
-    return render_template('postblog.html', title="Post-Blog",
-    blog_title=blog_title,
-    blog_body=blog_body,
-    blog_title_error=blog_title_error,
+    return render_template('postblog.html', title="Post-Blog", blog_title=blog_title, 
+    blog_body=blog_body, 
+    blog_title_error=blog_title_error, 
     blog_body_error=blog_body_error)
 
 
