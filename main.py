@@ -56,17 +56,23 @@ def post_blog():
             db.session.commit()
             return redirect('/blog?id={0}'.format(new_blog.id))
         else:
-            if blog_title == "":
+            if blog_title == "" and blog_body == "":
                 blog_title_error = "Title required."
-                blog_title = ""
+                blog_body_error = "Blog body required."
+
+            elif blog_title == "":
+                blog_title_error = "Title required."
+                blog_body = request.form['blog-body']
             else:
                 if blog_body == "":
                     blog_body_error = "Blog body required."
-                    blog_body = ""
+                    blog_title = request.form['blog-title']
 
             return render_template('postblog.html', title="Post-Blog", 
             blog_title_error=blog_title_error,
-            blog_body_error=blog_body_error)
+            blog_body_error=blog_body_error,
+            blog_title=blog_title,
+            blog_body=blog_body)
 
 
     return render_template('postblog.html', title="Post-Blog")
