@@ -43,6 +43,7 @@ def all_blogs():
 @app.route('/postblog', methods=['POST', 'GET'])
 def post_blog():
 
+
     if request.method == 'POST':
         blog_title = request.form['blog-title']
         blog_body = request.form['blog-body']
@@ -63,11 +64,12 @@ def post_blog():
                     blog_body_error = "Blog body required."
                     blog_body = ""
 
+            return render_template('postblog.html', title="Post-Blog", 
+            blog_title_error=blog_title_error,
+            blog_body_error=blog_body_error)
 
-    return render_template('postblog.html', title="Post-Blog", blog_title=blog_title, 
-    blog_body=blog_body, 
-    blog_title_error=blog_title_error, 
-    blog_body_error=blog_body_error)
+
+    return render_template('postblog.html', title="Post-Blog")
 
 
 
