@@ -27,18 +27,17 @@ def index():
     return redirect('/blog')
 
 
-@app.route('/blog')
+@app.route('/blog', methods=['GET'])
 def all_blogs():
 
-    # if request.method == 'POST':
-    #     blog_title = request.form('blog')
-    #     new_blog = Blog(blog_title, body)
-    #     db.session.add(new_blog)
-    #     db.session.commit()
+    if request.args:
+        selected_blog = request.args.get("id")
+        right_blog = Blog.query.get(selected_blog)
+        return render_template('blog_page.html', title="blog-page", blog=right_blog)
+    else:
+        blogs = Blog.query.all()
 
-    blogs = Blog.query.all()
-
-    return render_template('blog.html', title="Blogs", blogs=blogs)
+        return render_template('blog.html', title="Blogs", blogs=blogs)
 
 
 @app.route('/postblog', methods=['POST', 'GET'])
@@ -47,13 +46,18 @@ def post_blog():
     if request.method == 'POST':
         blog_title = request.form['blog-title']
         blog_body = request.form['blog-body']
-        new_blog = Blog(blog_title, blog_body)
-        db.session.add(new_blog)
-        db.session.commit()
 
-
+        if blog_title != "" and blog_body != "":
+            new_blog = Blog(blog_title, blog_body)
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect('/blog?id={0}'.format(new_blog.id))
+        else:
+            pass
 
     return render_template('postblog.html', title="Post-Blog")
+
+
 
 
 
